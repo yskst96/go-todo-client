@@ -5,6 +5,15 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     name: "Home",
+    // 謎の型エラーがでる(betaだから？)
+    // @ts-ignore
+    component: Home
+  },
+  {
+    path: "/",
+    name: "Home",
+    // 謎の型エラーがでる(betaだから？)
+    // @ts-ignore
     component: Home
   }
 ];
