@@ -1,30 +1,58 @@
 <template>
-  <div>
-    <button @click="increment">
-      Count is: {{ state.count }}, double is: {{ state.double }}
-    </button>
-    <router-view></router-view>
-  </div>
+    <div>
+        <div class="task-input">
+            <div class="input-elm">
+                <div>タスク名</div>
+                <input type="text" v-model="taskInput.title" />
+            </div>
+            <div class="input-elm">
+                <div>詳細</div>
+                <textarea v-model="taskInput.detail" />
+            </div>
+            <div class="input-elm">
+                <div>期限</div>
+                <input type="text" v-model="taskInput.limit" />
+            </div>
+            <div class="input-elm">
+                <button @click="addTask">ADD TASK</button>
+            </div>
+        </div>
+        <div>{{ taskInput }}</div>
+        <div>
+            <div v-for="(task, index) in tasks" :key="index">
+                {{ task.title }}
+            </div>
+        </div>
+    </div>
 </template>
-
 <script lang="ts">
-import { defineComponent, reactive, computed } from "vue";
+import { defineComponent } from 'vue'
+import useTask from '@/components/task'
 
 export default defineComponent({
-  setup() {
-    const state = reactive({
-      count: 0,
-      double: computed(() => state.count * 2)
-    }) as { count: number; double: number };
+    async setup() {
+        // created相当の処理はsetUp時に直接書く
 
-    function increment() {
-      state.count++;
+        const { tasks, addTask, taskInput } = await useTask()
+
+        console.log(tasks.value[0])
+
+        return { tasks, taskInput, addTask }
     }
-
-    return {
-      state,
-      increment
-    };
-  }
-});
+})
 </script>
+<style scoped>
+.task-input {
+    padding: 16px;
+    background-color: rgb(145, 229, 156);
+}
+.input-elm {
+    margin-bottom: 24px;
+}
+.input-elm input {
+    width: 20rem;
+}
+.input-elm textarea {
+    width: 20rem;
+}
+</style>

@@ -11,3 +11,9 @@ https://composition-api.vuejs.org/#summary
 ## バックエンドは Golang(echo)
 
 go-todo-api リポジトリ
+
+## memo
+
+- LINE でリマインド
+- share 機能で簡単に LINE 連携
+- Google ログイン
