@@ -2,13 +2,9 @@
 
 import axios from '@/util/axios'
 import { ref } from 'vue'
+import { Tag } from '@/components/tag'
 
-type Tag = {
-    id: string
-    name: string
-}
-
-type Task = {
+export type Task = {
     id: string
     title: string
     detail: string
@@ -17,20 +13,8 @@ type Task = {
     user: string
 }
 
-export default async function useTask() {
+export async function useTask() {
     const headers = { 'x-user': 'yskst96' }
-
-    const inititalTaskInput: Task = {
-        // ダミーID
-        id: 'ffffffffffffffffffffffff',
-        title: '',
-        detail: 'test detail',
-        limit: '20200909',
-        tags: [],
-        user: 'yskst96'
-    }
-
-    const taskInput = ref(inititalTaskInput)
 
     // タスク一覧
     const resp = await axios.get('/tasks', { headers })
@@ -40,20 +24,18 @@ export default async function useTask() {
 
     console.log(tasks)
 
-    //タスク更新
-    const addTask = async () => {
-        const task = { ...taskInput.value }
+    //タスク追加
+    const addTask = async (task: Task) => {
         console.log('add:', task)
+        const res = await axios.post('/tasks', task, { headers })
+        console.log('added:', task)
+        task.id = res.data
         tasks.value.push(task)
-        await axios.post('/tasks', task, { headers })
-        taskInput.value.title = ''
-        taskInput.value.detail = ''
-        taskInput.value.limit = ''
+        console.log(task, tasks.value)
     }
 
     return {
         tasks,
-        taskInput,
         addTask
     }
 }
