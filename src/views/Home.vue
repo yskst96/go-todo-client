@@ -1,41 +1,22 @@
 <template>
     <div>
-        <button @click="addingTask = true">TODOを追加する</button>
-        <Modal :visible="addingTask">
-            <div class="task-input">
-                <div class="input-elm">
-                    <div>タスク名</div>
-                    <input type="text" v-model="taskInput.title" />
-                </div>
-                <div class="input-elm">
-                    <div>詳細</div>
-                    <textarea v-model="taskInput.detail" />
-                </div>
-                <div class="input-elm">
-                    <div>期限</div>
-                    <input type="text" v-model="taskInput.limit" />
-                </div>
-                <div class="input-elm">
-                    <div>タグ</div>
-                    <input type="text" v-model="tagfilterInput" />
-                    <div>{{ taskInput.tags }}</div>
-                    <div>
-                        <button
-                            v-for="(tag, index) in tagfilter(tagfilterInput)"
-                            :key="index"
-                            @click="taskInput.tags.push(tag)"
-                        >
-                            {{ tag.name }}
-                        </button>
-                    </div>
-                </div>
-                <div class="input-elm">
-                    <button @click="newTask(taskInput)">ADD TASK</button>
-                </div>
-            </div>
+        <AccentButton @click="isAddingTask = true">TODOを追加する</AccentButton>
+
+        <!-- TODO新規追加モーダル -->
+        <Modal
+            :visible="isAddingTask"
+            :close="
+                () => {
+                    isAddingTask = false
+                }
+            "
+        >
+            <AddTask :addTask="newTask" :tagfilter="tagfilter"></AddTask>
         </Modal>
-        <button @click="addingTag = true">タグを新規登録する</button>
-        <Modal :visible="addingTag">
+
+        <!-- <button @click="isAddingTag = true">タグを新規登録する</button>
+        タグ新規追加モーダル
+        <Modal :visible="isAddingTag">
             <div class="tag-input">
                 <input type="text" v-model="tagInput" />
                 <div>{{ tags }}</div>
@@ -45,73 +26,73 @@
             </div>
             <div>{{ taskInput.value }}</div>
         </Modal>
+        -->
+
+        <!-- タスク編集モーダル -->
+        <Modal :visible="isEditingTask">
+            <div>編集</div>
+        </Modal>
+
+        <!-- タスクフィルタ  -->
+        <!-- <div class="tasl-filter">
+            <div>
+                <span>タグでフィルタ：</span>
+                <SuggestInput
+                    :items="tags.map(t => t.name)"
+                    :value="taskFilterInput"
+                    @input="onFilterInput"
+                ></SuggestInput>
+            </div>
+        </div> -->
+
+        <!-- タスク一覧 -->
         <div class="task-list">
             <div class="task" v-for="(task, index) in tasks" :key="index">
-                <div>{{ task.title }}</div>
-                <div>期限:{{ task.limit }}</div>
-                <div>{{ task.detail }}</div>
-                <div>
-                    <div>タグ</div>
-                    <div v-if="task.tags.length != 0">
-                        {{ task.tags.map(t => t.name) }}
-                    </div>
-                    <div v-else>-</div>
-                    <div>
-                        <div>
-                            <button
-                                v-for="(tag, index) in tagfilter()"
-                                :key="index"
-                                @click="taskInput.tags.push(tag)"
-                            >
-                                {{ tag.name }}
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <TaskCard :task="task" :delete="deleteTask"></TaskCard>
             </div>
         </div>
     </div>
 </template>
 <script lang="ts">
 import { defineComponent, ref, reactive } from 'vue'
-import { useTask, Task } from '@/components/task'
-import { useTag } from '@/components/tag'
+import { useTask, Task } from '@/hooks/task'
+import { useTag } from '@/hooks/tag'
 import Modal from '@/components/Modal.vue'
+import TaskCard from '@/components/TaskCard.vue'
+import AccentButton from '@/components/AccentButton.vue'
+import AddTask from '@/components/AddTask.vue'
+// import SuggestInput from '@/components/SuggestInput.vue'
 
 export default defineComponent({
     components: {
-        Modal
+        Modal,
+        TaskCard,
+        AccentButton,
+        AddTask
+        // SuggestInput,
     },
     async setup() {
         // created相当の処理はsetUp時に直接書く
 
         // task
-        const { tasks, addTask } = await useTask()
+        const { tasks, addTask, deleteTask } = await useTask()
         const initTask: Task = {
             // ダミーID
             id: 'ffffffffffffffffffffffff',
             title: '',
             detail: 'test detail',
             limit: '20200909',
-            tags: [
-                {
-                    id: '5ed2881de41620edb9e8664e',
-                    name: 'aaaa',
-                    user: 'yskst96'
-                }
-            ],
+            tags: [],
             user: 'yskst96'
         }
         const taskInput = reactive(initTask)
-        const addingTask = ref(false)
+        const isAddingTask = ref(false)
+        const isEditingTask = ref(false)
+        const taskFilterInput = ref('')
 
         const newTask = async (task: Task) => {
-            await addTask({ ...task })
-            taskInput.title = ''
-            taskInput.detail = ''
-            taskInput.tags = []
-            taskInput.limit = ''
-            addingTask.value = false
+            await addTask(task)
+            isAddingTask.value = false
         }
 
         //tag
@@ -119,23 +100,36 @@ export default defineComponent({
 
         const tagInput = ref('')
         const tagfilterInput = ref('')
-        const addingTag = ref(false)
+        const isAddingTag = ref(false)
         const newTag = async () => {
             await addTag(tagInput.value)
-            addingTag.value = false
+            isAddingTag.value = false
+        }
+
+        const onFilterInput = (event: { type: string; value: string }) => {
+            if (event.type !== 'filter') return
+            taskFilterInput.value = event.value
         }
 
         return {
+            //task
             tasks,
             taskInput,
             newTask,
-            addingTask,
+            deleteTask,
+            isAddingTask,
+            isEditingTask,
+            taskFilterInput,
+
+            //Tag
             tags,
             tagInput,
             newTag,
             tagfilter,
             tagfilterInput,
-            addingTag
+            isAddingTag,
+
+            onFilterInput
         }
     }
 })
@@ -143,7 +137,6 @@ export default defineComponent({
 <style scoped>
 .task-input {
     padding: 16px;
-    background-color: rgb(145, 229, 156);
 }
 .input-elm {
     margin-bottom: 24px;
@@ -155,12 +148,7 @@ export default defineComponent({
     width: 16rem;
 }
 
-.tag-input {
-    background-color: rgb(145, 181, 229);
-}
-
 .task-list .task {
-    border: solid 2px black;
     margin: 4px 0px;
 }
 </style>

@@ -2,7 +2,7 @@
 
 import axios from '@/util/axios'
 import { ref } from 'vue'
-import { Tag } from '@/components/tag'
+import { Tag } from '@/hooks/tag'
 
 export type Task = {
     id: string
@@ -34,8 +34,19 @@ export async function useTask() {
         console.log(task, tasks.value)
     }
 
+    //タスク削除
+    const deleteTask = async (id: string) => {
+        const params = {
+            id
+        }
+        const res = await axios.delete('/tasks', { params, headers })
+        console.log(res)
+        tasks.value = tasks.value.filter(t => t.id !== id)
+    }
+
     return {
         tasks,
-        addTask
+        addTask,
+        deleteTask
     }
 }
