@@ -45,7 +45,6 @@
                 </template>
             </div>
         </div>
-        <div>{{ taskInput }}</div>
         <div class="input-elm add-button">
             <AccentButton @click="newTask(taskInput)">
                 <span class="add-text">追加する</span>
