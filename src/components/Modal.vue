@@ -13,8 +13,8 @@ export default defineComponent({
         close: { type: Function as PropType<() => void> }
     },
 
-    setup(props) {
-        console.log(props.visible)
+    setup() {
+        //
     }
 })
 </script>
@@ -38,7 +38,6 @@ export default defineComponent({
     background-color: rgba(0, 0, 0, 0.75);
     visibility: hidden;
     opacity: 0;
-    transition: 0.1s linear;
 }
 
 .modal-overlay.is-open {

@@ -60,14 +60,15 @@
             </div>
         </div>
         <div class="input-elm add-button">
-            <AccentButton @click="newTask(taskInput)">
-                <span class="add-text">追加する</span>
+            <AccentButton>
+                <span class="add-text" @click="update">タスクを更新する</span>
             </AccentButton>
         </div>
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, PropType, ref, reactive } from 'vue'
+import { defineComponent, PropType, ref, computed } from 'vue'
+import clonedeep from 'lodash.clonedeep'
 import { Task } from '@/hooks/task'
 import { Tag } from '@/hooks/tag'
 
@@ -75,40 +76,41 @@ import TagLabel from '@/components/TagLabel.vue'
 import AccentButton from '@/components/AccentButton.vue'
 import TextInput from '@/components/TextInput.vue'
 import TextAreaInput from '@/components/TextAreaInput.vue'
+import { useTask } from '@/hooks/task'
 
 export default defineComponent({
     props: {
-        addTask: { type: Function as PropType<(task: Task) => Promise<void>> },
-        tagfilter: { type: Function as PropType<(text: string) => Tag[]> }
+        updateTask: {
+            type: Function as PropType<(task: Task) => Promise<void>>,
+            required: true
+        },
+        tagfilter: {
+            type: Function as PropType<(text: string) => Tag[]>,
+            required: true
+        },
+        target: { type: String as PropType<string>, required: true }
     },
     components: { TagLabel, AccentButton, TextInput, TextAreaInput },
-    setup(props) {
+    async setup(props) {
+        console.log('target:', props.target)
         const tagfilterInput = ref('')
-        const initTask: Task = {
-            // ダミーID
-            id: 'ffffffffffffffffffffffff',
-            title: '',
-            detail: '',
-            limit: '',
-            tags: [],
-            user: 'yskst96'
-        }
-        const taskInput: Task = reactive(initTask)
 
-        const newTask = async (task: Task) => {
-            if (!props.addTask) return
+        const { tasks } = await useTask()
+        const editingTask = clonedeep(tasks.value)
 
-            await props.addTask({ ...task })
-            taskInput.title = ''
-            taskInput.detail = ''
-            taskInput.tags = []
-            taskInput.limit = ''
+        const current = editingTask.find(t => t.id === props.target)
+
+        const taskInput = ref(current)
+
+        const update = async () => {
+            console.log('update', taskInput.value)
+            if (taskInput.value) await props.updateTask(taskInput.value)
         }
 
         return {
             tagfilterInput,
             taskInput,
-            newTask
+            update
         }
     }
 })
@@ -120,29 +122,10 @@ export default defineComponent({
 .input-elm {
     margin: 8px 0px;
 }
-
 .tagged {
     margin-top: 20px;
 }
 .add-button {
     margin-top: 20px;
-}
-
-.selectTag {
-    display: flex;
-    flex-wrap: wrap;
-}
-
-.selectable-tags {
-    margin: 4px 2px;
-}
-
-.tagged {
-    display: flex;
-    flex-wrap: wrap;
-}
-
-.tagged-tags {
-    margin: 4px 2px;
 }
 </style>

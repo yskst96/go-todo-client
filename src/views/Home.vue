@@ -3,34 +3,19 @@
         <AccentButton @click="isAddingTask = true">TODOを追加する</AccentButton>
 
         <!-- TODO新規追加モーダル -->
-        <Modal
-            :visible="isAddingTask"
-            :close="
-                () => {
-                    isAddingTask = false
-                }
-            "
-        >
+        <Modal :visible="isAddingTask" :close="closeAddModal">
             <AddTask :addTask="newTask" :tagfilter="tagfilter"></AddTask>
         </Modal>
 
-        <!-- <button @click="isAddingTag = true">タグを新規登録する</button>
-        タグ新規追加モーダル
-        <Modal :visible="isAddingTag">
-            <div class="tag-input">
-                <input type="text" v-model="tagInput" />
-                <div>{{ tags }}</div>
-                <button @click="newTag()">
-                    ADD NEW TAG
-                </button>
-            </div>
-            <div>{{ taskInput.value }}</div>
-        </Modal>
-        -->
-
         <!-- タスク編集モーダル -->
-        <Modal :visible="isEditingTask">
-            <div>編集</div>
+        <Modal :visible="isEditingTask" :close="closeEditModal">
+            <div v-if="isEditingTask">
+                <EditTask
+                    :updateTask="editTask"
+                    :tagfilter="tagfilter"
+                    :target="selectedTaskId"
+                ></EditTask>
+            </div>
         </Modal>
 
         <!-- タスクフィルタ  -->
@@ -46,9 +31,13 @@
         </div> -->
 
         <!-- タスク一覧 -->
-        <div class="task-list">
-            <div class="task" v-for="(task, index) in tasks" :key="index">
-                <TaskCard :task="task" :delete="deleteTask"></TaskCard>
+        <div class="task-list mx-2 grid lg:grid-cols-3 md:grid-cols-2 gap-4">
+            <div class="task my-2" v-for="(task, index) in tasks" :key="index">
+                <TaskCard
+                    :task="task"
+                    :delete="deleteTask"
+                    @click="openEditModal(task)"
+                ></TaskCard>
             </div>
         </div>
     </div>
@@ -61,6 +50,8 @@ import Modal from '@/components/Modal.vue'
 import TaskCard from '@/components/TaskCard.vue'
 import AccentButton from '@/components/AccentButton.vue'
 import AddTask from '@/components/AddTask.vue'
+import EditTask from '@/components/EditTask.vue'
+
 // import SuggestInput from '@/components/SuggestInput.vue'
 
 export default defineComponent({
@@ -68,14 +59,15 @@ export default defineComponent({
         Modal,
         TaskCard,
         AccentButton,
-        AddTask
+        AddTask,
+        EditTask
         // SuggestInput,
     },
     async setup() {
         // created相当の処理はsetUp時に直接書く
 
         // task
-        const { tasks, addTask, deleteTask } = await useTask()
+        const { tasks, addTask, deleteTask, updateTask } = await useTask()
         const initTask: Task = {
             // ダミーID
             id: 'ffffffffffffffffffffffff',
@@ -89,6 +81,12 @@ export default defineComponent({
         const isAddingTask = ref(false)
         const isEditingTask = ref(false)
         const taskFilterInput = ref('')
+        const selectedTaskId = ref('')
+
+        const editTask = async (task: Task) => {
+            await updateTask(task)
+            isEditingTask.value = false
+        }
 
         const newTask = async (task: Task) => {
             await addTask(task)
@@ -101,6 +99,7 @@ export default defineComponent({
         const tagInput = ref('')
         const tagfilterInput = ref('')
         const isAddingTag = ref(false)
+
         const newTag = async () => {
             await addTag(tagInput.value)
             isAddingTag.value = false
@@ -111,15 +110,33 @@ export default defineComponent({
             taskFilterInput.value = event.value
         }
 
+        const openEditModal = (task: Task) => {
+            selectedTaskId.value = task.id
+            isEditingTask.value = true
+        }
+
+        const closeAddModal = () => {
+            isAddingTask.value = false
+        }
+
+        const closeEditModal = () => {
+            isEditingTask.value = false
+        }
+
         return {
             //task
             tasks,
             taskInput,
             newTask,
             deleteTask,
+            editTask,
             isAddingTask,
             isEditingTask,
             taskFilterInput,
+            openEditModal,
+            closeAddModal,
+            closeEditModal,
+            selectedTaskId,
 
             //Tag
             tags,
@@ -134,7 +151,7 @@ export default defineComponent({
     }
 })
 </script>
-<style scoped>
+<style lang="postcss" scoped>
 .task-input {
     padding: 16px;
 }
@@ -146,9 +163,5 @@ export default defineComponent({
 }
 .input-elm textarea {
     width: 16rem;
-}
-
-.task-list .task {
-    margin: 4px 0px;
 }
 </style>

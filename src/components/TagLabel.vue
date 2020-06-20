@@ -1,6 +1,15 @@
 <template>
-    <div class="label">
+    <div
+        class="label"
+        :class="{ selectable: selectable, deletable: deletable }"
+    >
         <span>{{ tag.name }}</span>
+        <img
+            v-if="deletable"
+            class="delete-icon"
+            src="@/assets/clear-w.svg"
+            alt="delete"
+        />
     </div>
 </template>
 <script lang="ts">
@@ -13,7 +22,9 @@ type Props = {
 
 export default defineComponent({
     props: {
-        tag: { type: Object as PropType<Tag> }
+        tag: { type: Object as PropType<Tag> },
+        selectable: { type: Boolean as PropType<boolean>, default: false },
+        deletable: { type: Boolean as PropType<boolean>, default: false }
     },
     setup(props) {
         console.log(props.tag)
@@ -28,5 +39,21 @@ export default defineComponent({
     border-radius: 6px;
     color: #fffffe;
     background-color: #001858;
+}
+
+.selectable {
+    background-color: red;
+    cursor: pointer;
+}
+
+.deletable {
+    background-color: #001858;
+    cursor: pointer;
+}
+
+.delete-icon {
+    vertical-align: middle;
+    margin-left: 4px;
+    display: inline;
 }
 </style>

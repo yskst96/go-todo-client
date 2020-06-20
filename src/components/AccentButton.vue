@@ -1,6 +1,8 @@
 <template>
     <div>
-        <button class="button accent paragraph">
+        <button
+            class="w-40 mx-2 my-2 px-3 py-4 border-none rounded font-bold cursor-pointer accent paragraph"
+        >
             <slot></slot>
         </button>
     </div>
@@ -10,13 +12,8 @@ import { defineComponent } from 'vue'
 
 export default defineComponent({})
 </script>
-<style scoped>
+<style lang="postcss" scoped>
 .button {
-    padding: 12px 8px;
-    border-radius: 4px;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
     color: #172c66;
 }
 </style>

@@ -12,9 +12,12 @@
                     ></TagLabel>
                 </template>
             </div>
+            <div>
+                {{ task.detail }}
+            </div>
         </div>
-        <div class="delete" @click="deleteTask(task.id)">
-            <span>delete</span>
+        <div class="delete">
+            <span @click.stop="deleteTask(task.id)">delete</span>
         </div>
     </div>
 </template>
@@ -65,7 +68,14 @@ export default defineComponent({
     color: #172c66;
     border-radius: 8px;
     border: none;
+    cursor: pointer;
 }
+
+.card:hover {
+    background-color: #f1b99d;
+    transition: background-color 250ms;
+}
+
 .info {
     padding: 8px 8px;
 }
