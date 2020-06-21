@@ -12,9 +12,11 @@
     "dayjs": "^1.8.28",
     "lodash.clonedeep": "^4.5.0",
     "register-service-worker": "^1.7.1",
+    "simplepicker": "^2.0.2",
     "vue": "^3.0.0-beta.1",
+    "vue-flatpickr-component": "^8.1.5",
     "vue-router": "^4.0.0-alpha.6",
-    "vuejs-datepicker": "^1.6.2"
+    "vue-simple-picker": "^1.0.2"
   },
   "devDependencies": {
     "@types/lodash.clonedeep": "^4.5.6",
