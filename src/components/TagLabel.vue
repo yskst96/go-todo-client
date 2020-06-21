@@ -38,17 +38,17 @@ export default defineComponent({
     text-align: center;
     border-radius: 6px;
     color: #fffffe;
-    background-color: #001858;
+    @apply bg-indigo-900;
 }
 
 .selectable {
-    background-color: red;
-    cursor: pointer;
+    @apply bg-orange-400;
+    @apply cursor-pointer;
 }
 
 .deletable {
-    background-color: #001858;
-    cursor: pointer;
+    @apply bg-indigo-900;
+    @apply cursor-pointer;
 }
 
 .delete-icon {
