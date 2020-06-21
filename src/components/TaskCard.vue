@@ -43,7 +43,7 @@ export default defineComponent({
         }
 
         const taskLimit = computed(() => {
-            return dayjs(props.task?.limit).format('YYYY/MM/DD')
+            return dayjs(props.task?.limit).format('YYYY/MM/DD HH時')
         })
 
         const deleteTask = async (id: string) => {

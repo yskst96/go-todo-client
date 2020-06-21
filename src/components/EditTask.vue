@@ -16,10 +16,12 @@
         </div>
         <div class="input-elm">
             <div>期限</div>
-            <TextInput
+            <DatePicker
+                ref="datepicker"
+                :picker="'edit-task-limit'"
                 :value="taskInput.limit"
-                @input="value => (taskInput.limit = value)"
-            />
+                @input="taskInput.limit = $event"
+            ></DatePicker>
         </div>
         <div class="input-elm">
             <div>タグ</div>
@@ -31,9 +33,11 @@
             <div class="selectTag">
                 <template
                     v-for="(tag, index) in tagfilter(tagfilterInput).filter(
-                        t => !taskInput.tags.includes(t)
+                        t => !taskInput.tags.some(ti => ti.id === t.id)
                     )"
                 >
+                    <!-- <div :key="index">{{ tagfilter(tagfilterInput) }}</div>
+                    <div :key="index">{{ taskInput.tags }}</div> -->
                     <div :key="index" class="selectable-tags">
                         <TagLabel
                             :tag="tag"
@@ -67,7 +71,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, PropType, ref, computed } from 'vue'
+import { defineComponent, PropType, ref } from 'vue'
 import clonedeep from 'lodash.clonedeep'
 import { Task } from '@/hooks/task'
 import { Tag } from '@/hooks/tag'
@@ -76,6 +80,7 @@ import TagLabel from '@/components/TagLabel.vue'
 import AccentButton from '@/components/AccentButton.vue'
 import TextInput from '@/components/TextInput.vue'
 import TextAreaInput from '@/components/TextAreaInput.vue'
+import DatePicker from '@/components/DatePicker.vue'
 import { useTask } from '@/hooks/task'
 
 export default defineComponent({
@@ -90,7 +95,13 @@ export default defineComponent({
         },
         target: { type: String as PropType<string>, required: true }
     },
-    components: { TagLabel, AccentButton, TextInput, TextAreaInput },
+    components: {
+        TagLabel,
+        AccentButton,
+        TextInput,
+        TextAreaInput,
+        DatePicker
+    },
     async setup(props) {
         console.log('target:', props.target)
         const tagfilterInput = ref('')

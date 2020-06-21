@@ -27,7 +27,7 @@ export default defineComponent({
         deletable: { type: Boolean as PropType<boolean>, default: false }
     },
     setup(props) {
-        console.log(props.tag)
+        //
     }
 })
 </script>

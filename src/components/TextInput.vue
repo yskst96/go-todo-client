@@ -1,6 +1,11 @@
 <template>
     <div>
-        <input type="text" :value="value" @input.stop="handleInput" />
+        <input
+            type="text"
+            :value="value"
+            @input.stop="handleInput"
+            @keyup.enter="enter"
+        />
     </div>
 </template>
 
@@ -16,7 +21,12 @@ export default defineComponent({
             context.emit('input', value)
         }
 
-        return { handleInput }
+        const enter = (event: HTMLElementEvent<HTMLInputElement>) => {
+            console.log('enter', event.target.value)
+            context.emit('enter', event.target.value)
+        }
+
+        return { handleInput, enter }
     }
 })
 </script>

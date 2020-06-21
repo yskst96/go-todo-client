@@ -1,7 +1,7 @@
 //import axios from '@/util/axios'
 
 import axios from '@/util/axios'
-import { ref } from 'vue'
+import { ref, Ref } from 'vue'
 
 export type Tag = {
     id: string
@@ -9,14 +9,20 @@ export type Tag = {
     user: string
 }
 
+let tags: Ref<Tag[]>
+
 export async function useTag() {
     const headers = { 'x-user': 'yskst96' }
 
     // タグ一覧
-    const resp = await axios.get('/tags', { headers })
-    const tags_: Tag[] = resp.data
-    console.log('get tags result:', tags_)
-    const tags = ref(tags_)
+    if (!tags) {
+        const resp = await axios.get('/tags', { headers })
+        const tags_: Tag[] = resp.data || []
+
+        tags = ref(tags_)
+    }
+
+    console.log('tags:', tags.value)
 
     //新規タグ登録
     const addTag = async (name: string) => {
@@ -29,9 +35,11 @@ export async function useTag() {
         tag.id = res.data
         tags.value.push(tag)
         console.log('add tag:', tag)
+        return tag
     }
 
     const tagfilter: (text: string) => Tag[] = text => {
+        if (!tags) return []
         return tags.value.filter(t => t.name.indexOf(text) != -1)
     }
 

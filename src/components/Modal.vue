@@ -1,6 +1,9 @@
 <template>
     <div class="modal-overlay" :class="{ 'is-open': visible }" @click="close">
-        <div class="modal-content illustration" @click.stop="">
+        <div
+            class="modal-content illustration top-1/10 left-0 sm:left-2/5 rounded "
+            @click.stop=""
+        >
             <slot></slot>
         </div>
     </div>
@@ -22,10 +25,7 @@ export default defineComponent({
 .modal-content {
     z-index: 5;
     position: fixed;
-    top: 20%;
-    left: 40%;
     padding: 40px 64px;
-    border-radius: 8px;
 }
 
 .modal-overlay {

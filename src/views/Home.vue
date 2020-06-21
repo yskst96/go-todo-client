@@ -1,7 +1,6 @@
 <template>
     <div>
         <AccentButton @click="isAddingTask = true">TODOを追加する</AccentButton>
-
         <!-- TODO新規追加モーダル -->
         <Modal :visible="isAddingTask" :close="closeAddModal">
             <AddTask :addTask="newTask" :tagfilter="tagfilter"></AddTask>
@@ -61,6 +60,7 @@ export default defineComponent({
         AccentButton,
         AddTask,
         EditTask
+
         // SuggestInput,
     },
     async setup() {
