@@ -1,5 +1,6 @@
 import { RouteRecordRaw, createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
+import GlobalState from '../views/GlobalState.vue'
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -15,6 +16,13 @@ const routes: Array<RouteRecordRaw> = [
         // 謎の型エラーがでる(betaだから？)
         // @ts-ignore
         component: Home
+    },
+    {
+        path: '/gs',
+        name: 'GlobalState',
+        // 謎の型エラーがでる(betaだから？)
+        // @ts-ignore
+        component: GlobalState
     }
 ]
 
