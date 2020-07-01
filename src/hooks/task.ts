@@ -40,7 +40,7 @@ export async function useTask() {
         const params = {
             id
         }
-        const res = await axios.delete('/tasks', { params, headers })
+        await axios.delete('/tasks', { params, headers })
         tasks.value = tasks.value.filter(t => t.id !== id)
     }
 

@@ -1,4 +1,4 @@
-import { reactive, toRefs, ToRefs } from 'vue'
+import { reactive } from 'vue'
 
 type State = { foo: number; bar: string }
 

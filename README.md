@@ -13,7 +13,7 @@ https://composition-api.vuejs.org/#summary
 
 - LINE でリマインド
 - share 機能で簡単に LINE 連携
-- Google ログイン
+- Google ログイン doing
 
 - タグでタスクをフィルタ
 - タスクの新規追加はモーダル

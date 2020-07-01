@@ -26,7 +26,7 @@ export default defineComponent({
         selectable: { type: Boolean as PropType<boolean>, default: false },
         deletable: { type: Boolean as PropType<boolean>, default: false }
     },
-    setup(props) {
+    setup() {
         //
     }
 })
