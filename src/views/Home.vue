@@ -1,6 +1,13 @@
 <template>
     <div>
+        <div class="px-2 py-1 mb-2 bg-gray-300 flex justify-between">
+            <div>go-todo-app</div>
+            <div v-if="user">{{ user.displayName }}</div>
+        </div>
         <AccentButton @click="isAddingTask = true">TODOを追加する</AccentButton>
+        <AccentButton v-if="!user" @click="auth">Google Login</AccentButton>
+        <AccentButton v-else @click="signOut">SignOut</AccentButton>
+
         <!-- TODO新規追加モーダル -->
         <Modal :visible="isAddingTask" :close="closeAddModal">
             <AddTask :addTask="newTask" :tagfilter="tagfilter"></AddTask>
@@ -50,6 +57,8 @@ import TaskCard from '@/components/TaskCard.vue'
 import AccentButton from '@/components/AccentButton.vue'
 import AddTask from '@/components/AddTask.vue'
 import EditTask from '@/components/EditTask.vue'
+import * as firebase from 'firebase/app'
+import 'firebase/auth'
 
 // import SuggestInput from '@/components/SuggestInput.vue'
 
@@ -123,6 +132,32 @@ export default defineComponent({
             isEditingTask.value = false
         }
 
+        //Google認証回り
+        const auth = () => {
+            firebase.auth().languageCode = 'ja'
+            const provider = new firebase.auth.GoogleAuthProvider()
+            firebase.auth().signInWithRedirect(provider)
+        }
+
+        const authResult = await firebase.auth().getRedirectResult()
+
+        if (authResult.credential) {
+            const token = (authResult.credential as firebase.auth.OAuthCredential)
+                .accessToken
+            console.log('token:', token)
+        }
+
+        const user = authResult.user || firebase.auth().currentUser
+
+        if (user) {
+            console.log(user.email)
+            console.log(user.photoURL)
+        }
+
+        const signOut = async () => {
+            await firebase.auth().signOut()
+        }
+
         return {
             //task
             tasks,
@@ -146,7 +181,12 @@ export default defineComponent({
             tagfilterInput,
             isAddingTag,
 
-            onFilterInput
+            onFilterInput,
+
+            //auth
+            auth,
+            user,
+            signOut
         }
     }
 })
